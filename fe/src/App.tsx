@@ -1,19 +1,16 @@
-import { useEffect } from "react";
-import "./App.css";
+import { QueryClient, QueryClientProvider } from "react-query";
 
-const fetchUsers = async () => {
-  const response = await fetch("/api/users");
-  const users = await response.json();
-  return users;
-};
+import "./App.css";
+import LandingPage from "./LandingPage";
+
+const globalQueryClient = new QueryClient();
 
 function App() {
-  useEffect(() => {
-    fetchUsers()
-      .then((users) => console.log(users))
-      .catch(console.error);
-  }, []);
-  return <>Hello World</>;
+  return (
+    <QueryClientProvider client={globalQueryClient}>
+      <LandingPage />
+    </QueryClientProvider>
+  );
 }
 
 export default App;
