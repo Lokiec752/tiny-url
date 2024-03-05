@@ -3,7 +3,7 @@ import express from "express";
 const googleRouter = express.Router();
 
 googleRouter.get("/", async (req, res) => {
-  const rootUrl = "https://www.googleapis.com/oauth2/v2/auth";
+  const rootUrl = "https://accounts.google.com/o/oauth2/v2/auth";
 
   const options = {
     client_id: process.env.CLIENT_ID as string,
@@ -11,7 +11,7 @@ googleRouter.get("/", async (req, res) => {
     access_type: "offline",
     response_type: "code",
     prompt: "consent",
-    scopes: [
+    scope: [
       "https://www.googleapis.com/auth/userinfo.email",
       "https://www.googleapis.com/auth/userinfo.profile",
     ].join(" "),
