@@ -1,0 +1,14 @@
+node_modules
+.env
+.vscode
+dist
+dist.new
+*.tsbuildinfo
+*.tgz
+/*.sql
+.cache
+.turbo
+.rollup.cache
+dist-dts
+rollup.config-*.mjs
+*.db
