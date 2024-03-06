@@ -1,7 +1,7 @@
 import Database from "better-sqlite3";
 import { drizzle } from "drizzle-orm/better-sqlite3";
 import { NewUser, users } from "./schema";
-import { createUser } from "../controllers/user";
+import { createUser } from "../service/user.service";
 
 const betterSqlite = new Database(process.env.DB_URI || "sqlite.db");
 const db = drizzle(betterSqlite);
