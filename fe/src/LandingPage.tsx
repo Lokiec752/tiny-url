@@ -1,9 +1,19 @@
-import { useQuery } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 
 const fetchGoogleUrl = async () => {
   const response = await fetch("/api/google");
   const url = await response.json();
   return url.googleAuthUrl;
+};
+
+const getUserInfo = async () => {
+  try {
+    const response = await fetch("/api/user");
+    const user = await response.json();
+    return user;
+  } catch (error) {
+    return null;
+  }
 };
 
 const getUserSessions = async () => {
@@ -21,16 +31,39 @@ const deleteUserSession = async () => {
 };
 
 function LandingPage() {
-  const { data: loginUrl, isLoading } = useQuery({
+  const queryClient = useQueryClient();
+  const { data: loginUrl, isLoading: isGoogleUrlLoading } = useQuery({
     queryKey: ["google"],
     queryFn: fetchGoogleUrl,
   });
+  const { data: userInfo, isLoading: isUserInfoLoading } = useQuery({
+    queryKey: ["userInfo"],
+    queryFn: getUserInfo,
+    retry: false,
+  });
+  const deleteUserSessionMutation = useMutation(deleteUserSession, {
+    onSuccess: () => {
+      queryClient.invalidateQueries("userInfo");
+    },
+  });
+
+  const handleLogout = () => deleteUserSessionMutation.mutate();
+
+  const isLoading = isGoogleUrlLoading || isUserInfoLoading;
   if (isLoading) return <div>Loading...</div>;
+
+  if (!userInfo) {
+    return (
+      <p>
+        Please log in <a href={loginUrl}>with google account</a>
+      </p>
+    );
+  }
   return (
     <>
-      Please log in <a href={loginUrl}>with google account</a>
+      <p>Hello {userInfo.name}</p>
       <button onClick={getUserSessions}>Get user sessions</button>
-      <button onClick={deleteUserSession}>Logout</button>
+      <button onClick={handleLogout}>Logout</button>
     </>
   );
 }

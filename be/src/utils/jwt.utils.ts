@@ -28,7 +28,7 @@ export const verifyJwt = (token: string): VerifyJwtResult => {
       decoded,
     };
   } catch (error: any) {
-    console.error(error);
+    console.error(error.name);
     return {
       valid: false,
       expired: error.name === "TokenExpiredError",
@@ -46,9 +46,15 @@ export const getTokenCookieOptions = (maxAge: number): CookieOptions => ({
   secure: true,
 });
 
-export const getAccessTokenFromCookie = (cookie: string): string => {
-  const accessToken = cookie
-    .split(";")
-    .find((c) => c.startsWith("accessToken"));
-  return accessToken ? accessToken.split("=")[1] : "";
+export const getTokensFromCookie = (
+  cookie: string
+): { accessToken: string; refreshToken: string } | null => {
+  const splittedCookie = cookie.split(";");
+  const accessToken = splittedCookie.find((c) => c.trim().startsWith("accessToken"));
+  const refreshToken = splittedCookie.find((c) => c.trim().startsWith("refreshToken"));
+  if (!accessToken || !refreshToken) return null;
+  return {
+    accessToken: accessToken.split("=")[1],
+    refreshToken: refreshToken.split("=")[1],
+  };
 };

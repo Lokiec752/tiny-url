@@ -12,7 +12,7 @@ export const getAllUsers = async () => {
 
 export const getUserById = async (id: User["id"]) => {
   const user = await db.select().from(users).where(eq(users.id, id));
-  return user;
+  return user[0];
 };
 
 export const getUserByEmail = async (email: User["email"]) => {
