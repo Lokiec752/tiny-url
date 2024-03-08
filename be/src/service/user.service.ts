@@ -20,21 +20,23 @@ export const getUserByEmail = async (email: User["email"]) => {
   return user;
 };
 
-export const createUser = async (newUser: Omit<NewUser, "id">) => {
+export const createUser = async (newUser: Omit<NewUser, "id">): Promise<User> => {
   const newUserId = crypto.randomUUID();
   const creationDate = new Date().toISOString();
-  await db
+  const user = await db
     .insert(users)
-    .values({ ...newUser, id: newUserId, created_at: creationDate });
-  return newUser;
+    .values({ ...newUser, id: newUserId, created_at: creationDate })
+    .returning();
+  return user[0];
 };
 
-export const updateUser = async (data: User) => {
+export const updateUser = async (data: User): Promise<User> => {
   const updatedUser = await db
     .update(users)
     .set(data)
-    .where(eq(users.id, data.id));
-  return updatedUser;
+    .where(eq(users.id, data.id))
+    .returning();
+  return updatedUser[0];
 };
 
 export const deleteUser = async (id: User["id"]) => {

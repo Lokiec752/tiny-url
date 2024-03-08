@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import userRouter from "./controller/user.controller";
 import googleRouter from "./controller/google.controller";
 import sessionsRouter from "./controller/sessions.controller";
+import { deserializeUser } from "./middleware/deserializeUser";
 
 dotenv.config({ path: "../.env" });
 
@@ -11,6 +12,8 @@ const app: Express = express();
 const port = process.env.PORT || 3333;
 
 app.use(express.json());
+
+app.use(deserializeUser);
 
 app.use("/api/users", userRouter);
 app.use("/api/google", googleRouter);

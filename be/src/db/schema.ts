@@ -1,5 +1,4 @@
 import {
-  SQLiteBoolean,
   integer,
   sqliteTable,
   text,
