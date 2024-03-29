@@ -6,6 +6,7 @@ import googleRouter from "./controller/google.controller";
 import sessionsRouter from "./controller/sessions.controller";
 import { deserializeUser } from "./middleware/deserializeUser";
 import shortenerRouter from "./controller/shortener.controller";
+import linkRouter from "./controller/link.controller";
 
 dotenv.config({ path: "../.env" });
 
@@ -25,7 +26,7 @@ app.use("/api/shortener", shortenerRouter);
 app.use("/api/user", userRouter);
 app.use("/api/google", googleRouter);
 app.use("/api/sessions", sessionsRouter);
-
+app.use("/api/links", linkRouter);
 
 // GET short url
 app.get("/", async (req: Request, res: Response) => {
@@ -42,4 +43,4 @@ app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });
 
-// TODO: Add post and get for link shortening
+// TODO: Add dns server and dockerize the app

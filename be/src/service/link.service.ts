@@ -8,6 +8,11 @@ export const getAllLinks = async () => {
   return allLinks;
 };
 
+export const getAllLinksByUserId = async (userId: string) => {
+  const allLinks = await db.select().from(links).where(eq(links.user_id, userId));
+  return allLinks;
+};
+
 export const getLinkById = async (id: Link["id"]) => {
   const link = await db.select().from(links).where(eq(links.id, id));
   return link;

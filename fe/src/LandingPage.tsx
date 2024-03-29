@@ -1,10 +1,23 @@
-import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
+import { Links } from "./Links/Links";
+import { UrlForm } from "./UrlForm/UrlForm";
 
 const fetchGoogleUrl = async () => {
   const response = await fetch("/api/google");
   const url = await response.json();
   return url.googleAuthUrl;
+};
+
+const postLongUrl = async (url: string) => {
+  const response = await fetch("/api/shortener", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ url }),
+  });
+  const shortUrl = await response.json();
+  return shortUrl;
 };
 
 const getUserInfo = async () => {
@@ -17,11 +30,11 @@ const getUserInfo = async () => {
   }
 };
 
-const getUserSessions = async () => {
-  const response = await fetch("/api/sessions");
-  const sessions = await response.json();
-  return sessions;
-};
+// const getUserSessions = async () => {
+//   const response = await fetch("/api/sessions");
+//   const sessions = await response.json();
+//   return sessions;
+// };
 
 const deleteUserSession = async () => {
   const response = await fetch("/api/sessions", {
@@ -31,22 +44,7 @@ const deleteUserSession = async () => {
   return session;
 };
 
-const postLongUrl = async (url: string) => {
-  const response = await fetch("/api/shortener", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ url }),
-  });
-  console.log(response);
-  const shortUrl = await response.json();
-  console.log("Short url: ", shortUrl);
-  return shortUrl;
-};
-
 function LandingPage() {
-  const [shortUrl, setShortUrl] = useState("");
   const queryClient = useQueryClient();
   const { data: loginUrl, isLoading: isGoogleUrlLoading } = useQuery({
     queryKey: ["google"],
@@ -63,44 +61,51 @@ function LandingPage() {
     },
   });
   const postLongUrlMutation = useMutation(postLongUrl, {
-    onSuccess: (data) => {
-      setShortUrl(data.url);
+    onSuccess: () => {
+      queryClient.invalidateQueries("links");
     },
   });
+  const shortUrl = postLongUrlMutation.data?.shortUrl;
 
   const handleLogout = () => deleteUserSessionMutation.mutate();
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const url = formData.get("url") as string;
-    postLongUrlMutation.mutate(url);
-  };
+  const handlePostLongUrl = (url: string) => postLongUrlMutation.mutate(url);
 
   const isLoading = isGoogleUrlLoading || isUserInfoLoading;
   if (isLoading) return <div>Loading...</div>;
 
   if (!userInfo) {
     return (
-      <p>
-        Please log in <a href={loginUrl}>with google account</a>
-      </p>
+      <div className="flex justify-center items-center h-full">
+        <p>
+          Please log in <a href={loginUrl}>with google account</a>
+        </p>
+      </div>
     );
   }
+
   return (
-    <>
-      <p>Hello {userInfo.name}</p>
-      <button onClick={getUserSessions}>Get user sessions</button>
-      <button onClick={handleLogout}>Logout</button>
-      <div>
-        <form onSubmit={handleSubmit}>
-          <label>Paste your url:</label>
-          <input type="text" name="url" />
-          <button type="submit">Shorten</button>
-        </form>
-        {shortUrl && <p>Short url: {shortUrl}</p>}
+    <div className="flex flex-col gap-12 justify-center h-full">
+      <div className="flex justify-between">
+        <h1>Hello {userInfo.name}</h1>
+        <button onClick={handleLogout}>Logout</button>
+        {/* <button onClick={getUserSessions}>Get user sessions</button> */}
       </div>
-    </>
+      <div className="grid grid-cols-1 grid-rows-2 h-full justify-items-center">
+        <Links />
+        <UrlForm postUrl={handlePostLongUrl} />
+      </div>
+      {shortUrl && (
+        <div>
+          <p>
+            Short url:{" "}
+            <a href={shortUrl} target="_blank">
+              {shortUrl}
+            </a>
+          </p>
+        </div>
+      )}
+    </div>
   );
 }
 
