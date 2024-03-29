@@ -9,7 +9,7 @@ shortenerRouter.get("/:id", async (req: Request, res: Response) => {
   const shortUrlId = req.params.id;
   const originalUrl = await getOriginalUrl(shortUrlId);
   if (!originalUrl) {
-    return res.status(404).send({ error: "Link not found" });
+    return res.status(404).sendFile("404.html", { root: "src/public" });
   }
   res.redirect(originalUrl.original_url);
 });

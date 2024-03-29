@@ -14,6 +14,11 @@ const port = process.env.PORT || 3333;
 
 app.use(express.json());
 
+app.get("/short/:id", async (req: Request, res: Response) => {
+  console.log("Redirecting to original URL");
+  res.redirect(`/api/shortener/${req.params.id}`);
+});
+
 app.use(deserializeUser);
 
 app.use("/api/shortener", shortenerRouter);
@@ -21,14 +26,11 @@ app.use("/api/user", userRouter);
 app.use("/api/google", googleRouter);
 app.use("/api/sessions", sessionsRouter);
 
-app.get("/short/:id", async (req: Request, res: Response) => {
-  console.log("Redirecting to original URL");
-  res.redirect(`/api/shortener/${req.params.id}`);
-});
 
 // GET short url
 app.get("/", async (req: Request, res: Response) => {
-  res.send("Hello World");
+  const FE_ORIGIN = process.env.FE_ORIGIN as string;
+  res.redirect(FE_ORIGIN);
 });
 
 // POST long url
