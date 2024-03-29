@@ -5,6 +5,7 @@ import userRouter from "./controller/user.controller";
 import googleRouter from "./controller/google.controller";
 import sessionsRouter from "./controller/sessions.controller";
 import { deserializeUser } from "./middleware/deserializeUser";
+import shortenerRouter from "./controller/shortener.controller";
 
 dotenv.config({ path: "../.env" });
 
@@ -15,9 +16,15 @@ app.use(express.json());
 
 app.use(deserializeUser);
 
+app.use("/api/shortener", shortenerRouter);
 app.use("/api/user", userRouter);
 app.use("/api/google", googleRouter);
 app.use("/api/sessions", sessionsRouter);
+
+app.get("/short/:id", async (req: Request, res: Response) => {
+  console.log("Redirecting to original URL");
+  res.redirect(`/api/shortener/${req.params.id}`);
+});
 
 // GET short url
 app.get("/", async (req: Request, res: Response) => {
@@ -32,3 +39,5 @@ app.post("/", async (req: Request, res: Response) => {
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });
+
+// TODO: Add post and get for link shortening
