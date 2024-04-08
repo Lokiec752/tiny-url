@@ -1,9 +1,22 @@
-import { drizzle } from "drizzle-orm/better-sqlite3";
-import { migrate } from "drizzle-orm/better-sqlite3/migrator";
-import Database from "better-sqlite3";
+import { drizzle } from "drizzle-orm/mysql2";
+import { migrate } from "drizzle-orm/mysql2/migrator";
+import mysql from "mysql2/promise";
 
-const betterSqlite = new Database(process.env.DB_URI || "sqlite.db");
-const db = drizzle(betterSqlite);
+const connectionPromise = mysql.createConnection({
+  host: "localhost",
+  user: "myuser",
+  password: "mypassword",
+  database: "tiny-url-db",
+});
 
-migrate(db, { migrationsFolder: "drizzle" });
-betterSqlite.close();
+connectionPromise
+  .then(async (connection) => {
+    const db = drizzle(connection);
+    return await migrate(db, { migrationsFolder: "drizzle" });
+  })
+  .catch((error) => {
+    console.error("Error connecting to the database:", error);
+  })
+  .finally(() => {
+    connectionPromise.then((connection) => connection.end());
+  });

@@ -1,10 +1,14 @@
-import Database from "better-sqlite3";
-import { drizzle } from "drizzle-orm/better-sqlite3";
-import { NewUser, users } from "./schema";
 import { createUser } from "../service/user.service";
+import { drizzle } from "drizzle-orm/mysql2";
+import { migrate } from "drizzle-orm/mysql2/migrator";
+import mysql from "mysql2/promise";
 
-const betterSqlite = new Database(process.env.DB_URI || "sqlite.db");
-const db = drizzle(betterSqlite);
+const connectionPromise = mysql.createConnection({
+  host: process.env["DATABASE_HOST"],
+  user: process.env["DATABASE_USERNAME"],
+  password: process.env["DATABASE_PASSWORD"],
+  database: "tiny-url-db",
+});
 
 const testUser = {
   name: "test",
@@ -16,4 +20,14 @@ const seed = async () => {
   await createUser(testUser);
 };
 
-seed();
+connectionPromise
+  .then(async (connection) => {
+    const db = await drizzle(connection);
+    seed();
+  })
+  .catch((error) => {
+    console.error("Error connecting to the database:", error);
+  })
+  .finally(() => {
+    connectionPromise.then((connection) => connection.end());
+  });

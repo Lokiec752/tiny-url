@@ -16,6 +16,10 @@ export function Links() {
     return <div>Loading...</div>;
   }
 
+  if (links.length === 0) {
+    return <div>No links found.</div>;
+  }
+
   return (
     links.length && (
       <div className="flex justify-start flex-col mb-4 gap-8">

@@ -5,16 +5,17 @@ import { signJwt, verifyJwt } from "../utils/jwt.utils";
 import { getUserById } from "./user.service";
 
 export const createSessionForUser = async (user: User) => {
+  await db.insert(session).values({
+    id: crypto.randomUUID(),
+    user_id: user.id,
+    valid: true,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  });
   const userSession = await db
-    .insert(session)
-    .values({
-      id: crypto.randomUUID(),
-      user_id: user.id,
-      valid: true,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    })
-    .returning();
+    .select()
+    .from(session)
+    .where(eq(session.user_id, user.id));
   return userSession[0];
 };
 
@@ -35,11 +36,11 @@ export const getUserSessionById = async (sessionId: string) => {
 };
 
 export const updateSession = async (sessionId: string, valid: boolean) => {
+  await db.update(session).set({ valid }).where(eq(session.id, sessionId));
   const updatedSession = await db
-    .update(session)
-    .set({ valid })
-    .where(eq(session.id, sessionId))
-    .returning();
+    .select()
+    .from(session)
+    .where(eq(session.id, sessionId));
   return updatedSession[0];
 };
 

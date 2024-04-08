@@ -1,7 +1,13 @@
-import { drizzle } from "drizzle-orm/better-sqlite3";
-import Database from "better-sqlite3";
+import { drizzle } from "drizzle-orm/mysql2";
+import mysql from "mysql2/promise";
 
-const sqlite = new Database(process.env.DB_URI || "sqlite.db");
-const db = drizzle(sqlite);
+const poolConnection = mysql.createPool({
+  host: "localhost",
+  user: "myuser",
+  password: "mypassword",
+  database: "tiny-url-db",
+});
+
+const db = drizzle(poolConnection);
 
 export default db;

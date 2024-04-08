@@ -9,7 +9,10 @@ export const getAllLinks = async () => {
 };
 
 export const getAllLinksByUserId = async (userId: string) => {
-  const allLinks = await db.select().from(links).where(eq(links.user_id, userId));
+  const allLinks = await db
+    .select()
+    .from(links)
+    .where(eq(links.user_id, userId));
   return allLinks;
 };
 
@@ -19,7 +22,10 @@ export const getLinkById = async (id: Link["id"]) => {
 };
 
 export const getOriginalUrl = async (shortUrl: string) => {
-  const link = await db.select().from(links).where(like(links.short_url, `%${shortUrl}`));
+  const link = await db
+    .select()
+    .from(links)
+    .where(like(links.short_url, `%${shortUrl}`));
   return link[0];
 };
 
@@ -36,16 +42,14 @@ export const createLink = async (userId: string, longUrl: string) => {
   const newLinkId = crypto.randomUUID();
   const shortUrl = nanoid(6);
   const createdAt = new Date().toISOString();
-  const newLink = await db
-    .insert(links)
-    .values({
-      id: newLinkId,
-      user_id: userId,
-      original_url: longUrl,
-      short_url: `${BE_ORIGIN}/short/${shortUrl}`,
-      created_at: createdAt,
-    })
-    .returning();
+  await db.insert(links).values({
+    id: newLinkId,
+    user_id: userId,
+    original_url: longUrl,
+    short_url: `${BE_ORIGIN}/short/${shortUrl}`,
+    created_at: createdAt,
+  });
+  const newLink = await db.select().from(links).where(eq(links.id, newLinkId));
   return newLink[0];
 };
 

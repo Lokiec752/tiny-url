@@ -2,9 +2,8 @@ import { defineConfig } from "drizzle-kit";
 
 export default defineConfig({
   dbCredentials: {
-    url: "./sqlite.db",
+    connectionString: "mysql://myuser:mypassword@localhost:3306",
   },
-  driver: "better-sqlite",
   schema: "./src/db/schema.ts",
   out: "./drizzle",
 });
