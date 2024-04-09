@@ -1,0 +1,14 @@
+services:
+  db:
+    build:
+      context: ./db
+      dockerfile: Dockerfile
+    container_name: tiny-url-db
+    restart: always
+    ports:
+      - 3306:3306
+    volumes:
+      - tiny-url-db-vol:/var/lib/mysql
+
+volumes:
+  tiny-url-db-vol:
