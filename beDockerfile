@@ -1,0 +1,17 @@
+FROM node:21-alpine
+
+WORKDIR /usr/app/be
+
+COPY .env ../
+COPY ./be/package*.json ./
+
+RUN apk add --no-cache ca-certificates openssl
+RUN npm install
+
+COPY ./be .
+
+# RUN npm run db:migrate
+
+EXPOSE 3333
+
+CMD [ "npm", "run", "dev" ]

@@ -2,7 +2,7 @@ import { drizzle } from "drizzle-orm/mysql2";
 import mysql from "mysql2/promise";
 
 const poolConnection = mysql.createPool({
-  host: "localhost",
+  host: "db",
   user: "myuser",
   password: "mypassword",
   database: "tiny-url-db",

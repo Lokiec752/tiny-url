@@ -10,5 +10,16 @@ services:
     volumes:
       - tiny-url-db-vol:/var/lib/mysql
 
+  be:
+    build:
+      context: .
+      dockerfile: beDockerfile
+    container_name: tiny-url-be
+    restart: always
+    ports:
+      - 3333:3333
+    depends_on:
+      - db
+
 volumes:
   tiny-url-db-vol:
