@@ -1,8 +1,8 @@
 services:
   db:
     build:
-      context: ./db
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: db-dockerfile-dev
     container_name: tiny-url-db
     restart: always
     ports:
@@ -13,13 +13,28 @@ services:
   be:
     build:
       context: .
-      dockerfile: beDockerfile
+      dockerfile: be-dockerfile-dev
     container_name: tiny-url-be
     restart: always
     ports:
       - 3333:3333
+    volumes:
+      - ./be:/usr/app/be
     depends_on:
       - db
+
+  fe:
+    build:
+      context: .
+      dockerfile: fe-dockerfile-dev
+    container_name: tiny-url-fe
+    restart: always
+    ports:
+      - 4444:4444
+    volumes:
+      - ./fe:/usr/app/fe
+    depends_on:
+      - be
 
 volumes:
   tiny-url-db-vol:

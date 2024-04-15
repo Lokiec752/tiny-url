@@ -3,8 +3,6 @@ import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 
 // TODO: read credentials from environment variables in connection strings
-// TODO: persist DB with volumes
-// TODO: add docker container
 
 export const users = mysqlTable("users", {
   id: varchar("id", { length: 36 }).primaryKey(),

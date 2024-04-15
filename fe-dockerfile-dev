@@ -1,0 +1,15 @@
+FROM node:21-alpine
+
+WORKDIR /usr/app/fe
+
+COPY .env ../
+COPY ./fe/package*.json ./
+
+RUN apk add --no-cache ca-certificates openssl
+RUN npm install
+
+COPY ./fe ./usr/app/fe
+
+EXPOSE 4444
+
+CMD npm run dev --host
