@@ -42,5 +42,3 @@ app.post("/", async (req: Request, res: Response) => {
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });
-
-// TODO: Add dns server and dockerize the app

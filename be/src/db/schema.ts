@@ -2,8 +2,6 @@ import { boolean, mysqlTable, text, varchar } from "drizzle-orm/mysql-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 
-// TODO: read credentials from environment variables in connection strings
-
 export const users = mysqlTable("users", {
   id: varchar("id", { length: 36 }).primaryKey(),
   name: text("name").notNull(),
