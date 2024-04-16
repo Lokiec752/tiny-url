@@ -2,7 +2,7 @@ import { drizzle } from "drizzle-orm/mysql2";
 import mysql from "mysql2/promise";
 import dotenv from "dotenv";
 import { users } from "./schema";
-dotenv.config();
+dotenv.config({ path: "../.env" });
 
 const connectionPromise = mysql.createConnection({
   host: process.env.DATABASE_HOST,
