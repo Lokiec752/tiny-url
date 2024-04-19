@@ -28,7 +28,6 @@ export const verifyJwt = (token: string): VerifyJwtResult => {
       decoded,
     };
   } catch (error: any) {
-    console.error(error.name);
     return {
       valid: false,
       expired: error.name === "TokenExpiredError",
@@ -50,8 +49,12 @@ export const getTokensFromCookie = (
   cookie: string
 ): { accessToken: string; refreshToken: string } | null => {
   const splittedCookie = cookie.split(";");
-  const accessToken = splittedCookie.find((c) => c.trim().startsWith("accessToken"));
-  const refreshToken = splittedCookie.find((c) => c.trim().startsWith("refreshToken"));
+  const accessToken = splittedCookie.find((c) =>
+    c.trim().startsWith("accessToken")
+  );
+  const refreshToken = splittedCookie.find((c) =>
+    c.trim().startsWith("refreshToken")
+  );
   if (!accessToken || !refreshToken) return null;
   return {
     accessToken: accessToken.split("=")[1],

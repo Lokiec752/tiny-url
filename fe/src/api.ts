@@ -16,6 +16,14 @@ export const postLongUrl = async (url: string) => {
   return shortUrl;
 };
 
+export const deleteUrl = async (id: string) => {
+  const response = await fetch(`/api/links/${id}`, {
+    method: "DELETE",
+  });
+  const deletedUrl = await response.json();
+  return deletedUrl;
+}
+
 export const getUserInfo = async () => {
   try {
     const response = await fetch("/api/user");
